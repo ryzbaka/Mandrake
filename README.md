@@ -26,4 +26,4 @@ See also the list of [contributors](https://github.com/ryzbaka/Mandrake/contribu
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/ryzbaka/Mandrake/blob/master/LICENSE) file for details
