@@ -1,0 +1,2 @@
+# Mandrake
+A discord bot.
