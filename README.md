@@ -20,7 +20,7 @@ pip install nltk
 
 ## Authors
 
-* **Hamza Ali** - *Initial work* - [PurpleBooth](https://github.com/ryzbaka)
+* **Hamza Ali** - [RYZBAKA](https://github.com/ryzbaka)
 
 See also the list of [contributors](https://github.com/ryzbaka/Mandrake/contributors) who participated in this project.
 
