@@ -3,7 +3,7 @@ Mandrake is a discord chatbot that has the following features:
 * Identify hateful messages in the chat
 * Detect Profanity
 * Automatically save hyperlinks
-* ...and many more easter egg features.
+* ...and many more easter egg features!
 
 ## Getting Started
 <a href="https://discordapp.com/oauth2/authorize?client_id=598252932802150407&scope=bot">Add Mandrake to your server.</a>
