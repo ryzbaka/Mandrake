@@ -16,10 +16,10 @@ oo['target']=oo.target.astype('int')
 
 troll=oo[oo.target==1]
 not_troll=oo[oo.target==0]
-troll_content=list(troll.content)[:5000]
-troll_label=list(troll.target)[:5000]
-not_troll_content=list(not_troll.content)[:5000]
-not_troll_label=list(not_troll.target)[:5000]
+troll_content=list(troll.content)[:10000]
+troll_label=list(troll.target)[:10000]
+not_troll_content=list(not_troll.content)[:10000]
+not_troll_label=list(not_troll.target)[:10000]
 
 
 content=troll_content+not_troll_content
@@ -47,7 +47,7 @@ sequences=tokenizer.texts_to_sequences(cleancontent)
 maxlen=max([len(x) for x in sequences])
 #print(maxlen)
 padded=pad_sequences(sequences,maxlen=maxlen)
-
+print(maxlen)
 import pickle
 
 # saving
@@ -85,11 +85,13 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import GlobalAveragePooling1D,Dense,Embedding,LSTM,Bidirectional
 
 model=Sequential()
-model.add(Embedding(3000,64,input_length=56))
+model.add(Embedding(3000,64,input_length=maxlen))
 model.add(Bidirectional(LSTM(150,return_sequences=True)))
-model.add(tf.keras.layers.Dropout(0.3))
+#model.add(tf.keras.layers.Dropout(0.3))
+model.add(Bidirectional(LSTM(150,return_sequences=True)))
+#model.add(tf.keras.layers.Dropout(0.3))
 model.add(Bidirectional(LSTM(150)))
-model.add(Dense(100,activation='relu'))
+model.add(Dense(100,activation='tanh'))
 model.add(Dense(1,activation='sigmoid'))
 
 model.compile(loss='binary_crossentropy',optimizer='adam',metrics=['accuracy'])
@@ -103,7 +105,7 @@ predictions=model.predict_classes(testx)
 preds=[x[0] for x in predictions]
 
 
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix,roc_auc_score
 
-print(confusion_matrix(testy,preds))
+print(confusion_matrix(testy,preds),roc_auc_score(testy,preds))
 print('training complete!')

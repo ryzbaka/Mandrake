@@ -5,7 +5,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-model_filepath='trollmodels/Troll-Killer-06-0.736-0.909.model'
+model_filepath='trollmodels/Troll-Killer-11-0.849-0.965.model'
 model=load_model(model_filepath)
 print(model.summary())
 
@@ -23,7 +23,7 @@ def process_input(x):
             line+=word+' '
     line=line.rstrip()
     sequence=tokenizer.texts_to_sequences(line)[0]
-    padded=pad_sequences([sequence],maxlen=56)
+    padded=pad_sequences([sequence],maxlen=151)
     return padded
 
         
