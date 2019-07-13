@@ -1,3 +1,4 @@
+import sqlite3
 import re
 import sys
 import datetime as dt
@@ -6,6 +7,50 @@ import discord
 import pandas as pd
 import random
 import nltk
+import pickle
+conn=sqlite3.connect('troll.db')
+users=[]
+for row in conn.execute("select * from trolls;"):
+    users.append(row[0])
+print(users)
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+
+model_filepath='trollmodels/Troll-Killer-11-0.849-0.965.model'
+model=load_model(model_filepath)
+print(model.summary())
+
+with open('tokenizer.pickle', 'rb') as handle:
+    tokenizer = pickle.load(handle)
+'''
+print("enter sentence")
+string=input('>')
+'''
+'''
+async def process_input(x):
+    x=x.lower()
+    line=''
+    for word in nltk.word_tokenize(x):
+        if word not in nltk.corpus.stopwords.words('english') and word.isdigit()==False and re.search(r'[^!@#$%^&*()_.+=]+',word):
+            line+=word+' '
+    line=line.rstrip()
+    sequence=tokenizer.texts_to_sequences(line)[0]
+    padded=pad_sequences([sequence],maxlen=151)
+    return padded
+'''
+'''
+processed=process_input(string)
+prediction=model.predict_classes(processed)[0][0]
+if prediction==1:
+	print('troll')
+'''
+async def  check_troll(text):
+    processed=process_input(text)
+    prediction=model.predict_classes(processed)[0][0]
+    if prediction==1:
+        #do something to  add a point for that user maybe an sqlite db input?
+        await message.channel.send('troll')
 c1 = ['artless', 'bawdy', 'beslubbering', 'bootless', 'churlish', 'cockered',
 'clouted', 'craven', 'currish', 'dankish', 'dissembling', 'droning', 'errant',
 'fawning', 'fobbing', 'froward', 'frothy', 'gleeking', 'goatish', 'gorbellied',
@@ -39,8 +84,9 @@ length=len(jokes)
 oo=pd.read_csv('jokes.csv')
 questions=list(oo.Question)
 answers=list(oo.Answer)
-prof=pd.read_json('profane-words/words.json')
+prof=pd.read_json('words.json')
 profanity=list(prof.iloc[:,0])
+#profanity=list(prof.iloc[:,0])
 
 class MyClient(discord.Client):
     async def on_ready(self):
@@ -56,6 +102,21 @@ class MyClient(discord.Client):
 
     async def on_message(self, message):
         # we do not want the bot to reply to itself
+        #await check_troll(message.content)
+        for row in conn.execute("select * from trolls;"):
+            users.append(row[0])
+        for word in nltk.word_tokenize(message.content):
+            if word.lower() in profanity:
+                scold=random.randint(1,4)
+                if scold==1:
+                    await message.channel.send("Language!{0.author.mention}".format(message))
+                    break
+                elif scold==2:
+                    await message.channel.send("Mind your language{0.author.mention}".format(message))
+                elif scold==3:
+                    await message.channel.send("{0.author.mention},You kiss your mother with that mouth?".format(message))
+                else:    
+                    await message.channel.send("Good golly,{0.author.mention},that's a naughty word".format(message))
         if message.author.id == self.user.id:
             return
         if 'goodnight' in message.content.lower():
@@ -83,19 +144,13 @@ class MyClient(discord.Client):
                 break
             await message.channel.send('The gaydar is at {}'.format(random.choice(mems)))
         if message.content.lower()=="shoo mandrake shoo":
-            sentient=random.randint(1,3)
+            sentient=1
             if sentient==1:
                 await message.channel.send("If that's what you want {0.author.mention}, I am but a servant and you are the master.".format(message))
                 time.sleep(2)
                 await message.channel.send('Farewell all!')
                 time.sleep(3)
                 sys.exit()
-            elif sentient==2:
-                await message.channel.send("Actually, I don't think I'll leave just yet. Don't test me.")
-                time.sleep(2)
-                await message.channel.send("{0.author.mention}, I'll be watching you closesly.".format(message))
-            else:
-                await message.channel.send("Cool. Not leaving though.")
         if message.content.lower().startswith('diss'):
             await message.channel.send(f'thou {random.choice(c1)} {random.choice(c2)} {random.choice(c3)}!')
         if 'mandrake' in message.content.lower() and 'shoo' not in message.content.lower():
@@ -123,17 +178,37 @@ class MyClient(discord.Client):
             await message.channel.send('Yes, I am{0.author.mention}'.format(message))
         if message.content.startswith('!gamertime'):
             await message.channel.send("{0.author.mention},I'm still learning what that means".format(message))
-        for word in nltk.word_tokenize(message.content):
-            if word.lower() in profanity:
-                scold=random.randint(1,4)
-                if scold==1:
-                    await message.channel.send("Language!{0.author.mention}".format(message))
-                    break
-                elif scold==2:
-                    await message.channel.send("Mind your language{0.author.mention}".format(message))
-                elif scold==3:
-                    await message.channel.send("{0.author.mention},You kiss your mother with that mouth?".format(message))
-                else:    
-                    await message.channel.send("Good golly,{0.author.mention},that's a naughty word".format(message))
+        if message.content.startswith('!showtrolls'):
+            userset=set(users)
+            for u in userset:
+                await message.channel.send('Yes, I am{0.author.mention}'.format(message))
+        #new
+        tbc=message.content
+        tbc=tbc.lower()
+        line=''
+        for word in nltk.word_tokenize(tbc):
+            if word not in nltk.corpus.stopwords.words('english') and word.isdigit()==False and re.search(r'[^!@#$%^&*()_.+=]+',word):
+                line+=word+' '
+        line=line.rstrip()
+        sequence=tokenizer.texts_to_sequences(line)[0]
+        padded=pad_sequences([sequence],maxlen=151)
+        prediction=model.predict_classes(padded)[0][0]
+        if prediction==1:
+            #do something to  add a point for that user maybe an sqlite db input?
+            #await message.channel.send('troll')
+            if message.author.id in users:
+                conn.execute(f"update trolls set count=count+1 where username='{message.author.name}'")
+                conn.commit()
+                conn.execute(f"insert into messagelog values('{message.author.name}','{message.content}','{1}');")
+                conn.commit()
+            else:
+                users.append(message.author.name)
+                conn.execute(f"insert into trolls values('{message.author.name}',1)")
+                conn.commit()
+        else:
+            conn.execute(f"insert into messagelog values('{message.author.name}','{message.content}','{0}');")
 client = MyClient()
 client.run('NTk4MjUyOTMyODAyMTUwNDA3.XSUAEg.77s2MABsdJzClcFMUeJHQiLsIKY')
+#Fix issue with adding username and troll count to sql table
+#add column to trolls table that stores the troll message
+#IGDB API Key: 3a0eab2f200efd6acb7826e59a9b79bb
