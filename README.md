@@ -31,8 +31,6 @@ python3.6  mybot.py
 
 * **Hamza Ali** - [Linkedin](https://www.linkedin.com/in/hamza-ali-rizvi-643251148/)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/ryzbaka/Mandrake/blob/master/LICENSE) file for details
