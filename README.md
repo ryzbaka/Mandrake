@@ -29,7 +29,7 @@ python3.6  mybot.py
 ```
 ## Authors
 
-* **Hamza Ali** - *Initial work* - [Linkedin](https://www.linkedin.com/in/hamza-ali-rizvi-643251148/)
+* **Hamza Ali** - [Linkedin](https://www.linkedin.com/in/hamza-ali-rizvi-643251148/)
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
 
