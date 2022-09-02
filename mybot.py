@@ -134,15 +134,6 @@ class MyClient(discord.Client):
                 await message.channel.send(link)
                 writer=open('links.txt','a')
                 writer.write(link+' ')
-        if message.content.lower().startswith('gaydar'):
-            mems=[]
-            #print(self.guilds)
-            for chan in self.guilds:
-                #await message.channel.send(chan)
-                for mem in chan.members:
-                    mems.append(mem)
-                break
-            await message.channel.send('The gaydar is at {}'.format(random.choice(mems)))
         if message.content.lower()=="shoo mandrake shoo":
             sentient=1
             if sentient==1:
